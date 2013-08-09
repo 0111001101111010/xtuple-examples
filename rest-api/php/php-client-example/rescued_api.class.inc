@@ -28,6 +28,9 @@ class Rescued_ApiService extends Google_Service {
 
     $client->addService($this->serviceName, $this->version);
 
+    // Set the Google_Client property here so we can access it in Rescued_ServiceResource.
+    $this->client = $client;
+
     $discovery = $this->getDiscovery($config['url']);
 
     global $apiConfig;
@@ -111,6 +114,39 @@ class Rescued_Service extends Google_Model {
  *  </code>
  */
 class Rescued_ServiceResource extends Google_ServiceResource {
+  private $service;
+
+  /**
+   * Overridden so we can set and get the $service here.
+   * @see Google_ServiceResource#__construct()
+   */
+  public function __construct($service, $serviceName, $resourceName, $resource) {
+    $this->service = $service;
+    parent::__construct($service, $serviceName, $resourceName, $resource);
+  }
+
+  /**
+   * Overridden so we can set and get the access token in one place.
+   * @param $name
+   * @param $arguments
+   * @return Google_HttpRequest|array
+   * @throws Google_Exception
+   */
+  public function __call($name, $arguments) {
+    // TODO: Replace $_SESSION with a real database or memcached.
+    if (isset($_SESSION['access_token'])) {
+      $this->service->client->setAccessToken($_SESSION['access_token']);
+    }
+
+    $data = parent::__call($name, $arguments);
+
+    // TODO: Replace $_SESSION with a real database or memcached.
+    if ($this->service->client->getAccessToken()) {
+      $_SESSION['access_token'] = $this->service->client->getAccessToken();
+    }
+
+    return $data;
+  }
 
   /**
    * Adds a resource.
