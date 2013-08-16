@@ -117,6 +117,23 @@ class Rescued_ServiceResource extends Google_ServiceResource {
   private $service;
 
   /**
+   * Mimic how the Google_ServiceResource cleans up the $postBody. This allows
+   * our JSON-Patches to work below in the patch() function.
+   * @see Google_ServiceResource::stripNull()
+   */
+  protected function stripNull(&$o) {
+    $o = (array) $o;
+    foreach ($o as $k => $v) {
+      if ($v === null || strstr($k, "\0*\0__")) {
+        unset($o[$k]);
+      }
+      elseif (is_object($v) || is_array($v)) {
+        $this->stripNull($o[$k]);
+      }
+    }
+  }
+
+  /**
    * Overridden so we can set and get the $service here.
    * @see Google_ServiceResource#__construct()
    */
@@ -215,6 +232,14 @@ class Rescued_ServiceResource extends Google_ServiceResource {
    * @return Rescued_Service Resource object
    */
   public function patch($id, $resource_key, Rescued_Service $postBody, $optParams = array()) {
+    // $postBody needs to be an array or the parent::__call will strip the null
+    // properties off of our JSON-Patches and screw everything up.
+    // Shuffle patches off, convert to clean array and put the patches back.
+    $patches = $postBody->patches;
+    unset($postBody->patches);
+    $this->stripNull($postBody);
+    $postBody['patches'] = $patches;
+
     $params = array($resource_key => $id, 'postBody' => $postBody);
     $params = array_merge($params, $optParams);
     $data = $this->__call('patch', array($params));
