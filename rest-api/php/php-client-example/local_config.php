@@ -14,7 +14,7 @@ $apiConfig = array(
   'oauth2_client_id' => 'your-xtuple-client-id-here', // Set your client id here.
   'oauth2_client_secret' => '', // Can leave blank for this example using JWT.
   'oauth2_redirect_uri' => '', // Can leave blank for this example using JWT.
-  'oauth2_token_uri' => 'https://your-xtuple-mobile-host-here/instance/oauth/token', // Set your host here.
+  'oauth2_token_uri' => 'https://your-xtuple-mobile-host-here/your-database-name-here/oauth/token', // Set your host here.
   'oauth2_auth_url' => '', // Can leave blank for this example using JWT.
   'oauth2_federated_signon_certs_url' => '', // Can leave blank for this example using JWT.
 
@@ -28,18 +28,18 @@ $apiConfig = array(
   'services' => array(
     'contact' => array(
       'scope' => array(
-        'https://your-xtuple-mobile-host-here/instance/auth/contact', // Set your host here.
+        'https://your-xtuple-mobile-host-here/your-database-name-here/auth/contact', // Set your host here.
       )
     )
   ),
 
   // xTuple specific config settings.
   'xtuple' => array(
-    'url' => 'https://your-xtuple-mobile-host-here/instance/discovery/v1alpha1/apis/v1alpha1/rest', // Set your host here.
+    'url' => 'https://your-xtuple-mobile-host-here/your-database-name-here/discovery/v1alpha1/apis/v1alpha1/rest', // Set your host here.
     'rescued_debug_mode' => true,
     'oauth2_deligate' => 'admin',
     'oauth2_pk12_filename' => 'privatekey.p12', // The PK12 file downloaded from xTuple's "OAUTH2" client registration interface.
     'oauth2_pk12_pass' => 'notasecret', // Do not need to change this.
-    'oauth2_scope' => 'https://your-xtuple-mobile-host-here/instance/auth/contact', // Set your host here.
+    'oauth2_scope' => 'https://your-xtuple-mobile-host-here/your-database-name-here/auth/contact', // Set your host here.
   ),
 );
